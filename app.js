@@ -1,123 +1,138 @@
-/* maya-site v4 — «Нарезка».
-   Её фотографии режутся на полосы и при прокрутке собираются
-   в её курсовую. Полосы нарезаются здесь, на странице: файл
-   остаётся целым, полоса — это тот же фон со сдвинутым
-   background-position. */
+/* ============================================================
+   v5 — механика: статичная картинка в углу с таймером (5 с),
+   затем основа разворачивается на весь экран, элементы разлетаются
+   по экрану вместе с подписями, и картинка живёт дальше.
+   ============================================================ */
 (function () {
   "use strict";
 
-  var N = 12;
-  var PHOTOS = ["maya_04.jpg", "maya_05.jpg", "maya_06.jpg", "maya_07.jpg"];
-  var frame = document.getElementById("frame");
-  var glass = document.getElementById("glass");
-  var cuts = Array.prototype.slice.call(document.querySelectorAll(".cut"));
-  var flats = [document.getElementById("flat1"), document.getElementById("flat2"), document.getElementById("flat3")];
-  var poster = document.getElementById("poster");
-  var sign = document.getElementById("sign");
-  var hint = document.getElementById("hint");
+  var HOLD = 5000;          /* сколько висит статичная картинка */
+  var SCATTER = 1400;       /* длительность разлёта */
+  var narrow = window.innerWidth <= 760;
+  var cfg = narrow ? SCENES.mobile : SCENES.desktop;
+  var uid = narrow ? 'm' : 'd';
 
-  /* --- нарезка --- */
-  var strips = [];
-  for (var i = 0; i < N; i++) {
-    var d = document.createElement("div");
-    d.className = "strip";
-    d.style.setProperty("--i", String(i));
-    var a = document.createElement("div");
-    a.className = "s photo";
-    a.style.backgroundImage = "url(assets/" + PHOTOS[i % PHOTOS.length] + ")";
-    a.style.backgroundPosition = "50% " + Math.round(10 + ((i * 19) % 78)) + "%";
-    var b = document.createElement("div");
-    b.className = "s col";
-    b.style.backgroundImage = "url(assets/work_collage.jpg)";
-    d.appendChild(a);
-    d.appendChild(b);
-    frame.appendChild(d);
-    strips.push({ el: d, photo: a, col: b, i: i });
-  }
+  var stage = document.getElementById('stage');
+  var bg = buildBg(cfg, uid);        /* статичная бумага — свой слой, чтобы кэшировалась */
+  var base = buildBase(cfg, uid);     /* солнце с таймером и орбитой */
+  var parts = buildParts(cfg, uid);
 
-  /* --- размеры рамки под вьюпорт --- */
-  function layout() {
-    var w = window.innerWidth;
-    var narrow = w <= 760;
-    var fw = narrow ? Math.min(w * 0.74, 380) : Math.min(w * 0.29, 420);
-    var fh = fw * (1040 / 655);
-    frame.style.setProperty("--fw", fw.toFixed(1) + "px");
-    frame.style.setProperty("--fh", fh.toFixed(1) + "px");
-    frame.style.setProperty("--sh", (fh / N).toFixed(2) + "px");
-  }
-  layout();
-  window.addEventListener("resize", layout);
+  var baseWrap = document.createElement('div');
+  baseWrap.className = 'layer layer--base';
+  baseWrap.appendChild(bg);
+  baseWrap.appendChild(base);
+  var partsWrap = document.createElement('div');
+  partsWrap.className = 'layer layer--parts';
+  partsWrap.appendChild(parts);
+  stage.appendChild(baseWrap);
+  stage.appendChild(partsWrap);
 
-  /* --- математика прокрутки --- */
-  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
-  function lerp(a, b, t) { return a + (b - a) * t; }
-  function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
-  function seg(p, a, b) { return clamp((p - a) / (b - a), 0, 1); }
+  var timerGroup = base.querySelector('#timer');
+  var ring = timerGroup.querySelector('circle');
+  var digits = base.querySelector('#digits');
+  var CIRC = 2 * Math.PI * (cfg.sunR + 14);
 
-  var last = -1;
-  function render() {
-    requestAnimationFrame(render);
-    var max = document.documentElement.scrollHeight - window.innerHeight;
-    var p = clamp((window.scrollY || 0) / Math.max(max, 1), 0, 1);
-    if (Math.abs(p - last) < 0.0004) return;
-    last = p;
-
-    /* полосы: разлёт → плоскость */
-    var travel = ease(seg(p, 0.04, 0.58));
-    var morph = seg(p, 0.30, 0.62);
-    for (var i = 0; i < strips.length; i++) {
-      var s = strips[i];
-      var k = s.i - (N - 1) / 2;
-      var ex = (1 - travel) * (k * 66);
-      var ey = (1 - travel) * (k * 15);
-      var ez = (1 - travel) * (-s.i * 118);
-      var ry = (1 - travel) * (k * 2.6);
-      s.el.style.transform =
-        "translate3d(" + ex.toFixed(1) + "px," + ey.toFixed(1) + "px," + ez.toFixed(1) + "px)" +
-        " rotateY(" + ry.toFixed(2) + "deg)";
-      s.photo.style.opacity = (1 - morph).toFixed(3);
-      s.col.style.opacity = morph.toFixed(3);
-      s.el.style.zIndex = String(100 - Math.round(ez / 10));
-    }
-
-    /* её 3D-объект: глубже и крупнее, со своим свечением */
-    var gOp = 1 - seg(p, 0.40, 0.70);
-    glass.style.opacity = (0.30 + gOp * 0.70).toFixed(3);
-    glass.style.transform =
-      "translate3d(" + (-40 + p * 70).toFixed(0) + "px,0," + (-820 + p * 220).toFixed(0) + "px)" +
-      " rotateY(" + (-14 + p * 9).toFixed(1) + "deg)";
-
-    /* вырезки в глубине: плывут и расходятся */
-    for (var c = 0; c < cuts.length; c++) {
-      var cu = cuts[c];
-      var dir = c % 2 === 0 ? 1 : -1;
-      var drift = p * 260 * dir + c * 40;
-      var rise = Math.sin(p * 3 + c) * 14;
-      var cz = -900 + p * 320 + c * 90;
-      cu.style.opacity = (0.25 + 0.75 * (1 - seg(p, 0.45, 0.80))).toFixed(3);
-      cu.style.transform =
-        "translate3d(" + (drift * 0.35).toFixed(1) + "px," + (drift * 0.22 + rise).toFixed(1) + "px," + cz.toFixed(0) + "px)" +
-        " rotate(" + cu.style.getPropertyValue("--rot") + ")";
-    }
-
-    /* плоскости с текстом — до сборки */
-    var tIn = seg(p, 0.16, 0.30);
-    var tOut = seg(p, 0.42, 0.58);
-    var flatOp = tIn * (1 - tOut);
-    flats.forEach(function (f, k) {
-      if (!f) return;
-      var off = (k - 1) * 80;
-      f.style.opacity = flatOp.toFixed(3);
-      f.style.transform = "translate3d(" + (off * (1 - flatOp)).toFixed(0) + "px,0,40px) rotate(var(--rot))";
+  /* элементы: стартуют у солнца, затем разлетаются по своим местам */
+  var items = [];
+  var formNodes = parts.querySelectorAll('.form-wrap');
+  var sx = cfg.sun[0], sy = cfg.sun[1];
+  formNodes.forEach(function (node, i) {
+    var home = cfg.forms[i];
+    items.push({
+      node: node,
+      home: { x: home[0], y: home[1] },
+      from: { x: sx, y: sy },
+      rot: (i % 2 ? 1 : -1) * (8 + i * 4),
+      delay: i * 90
     });
+  });
 
-    /* осадок: собранная работа чуть «оседает» в кадре */
-    frame.style.transform = "scale(" + (1 + 0.02 * seg(p, 0.62, 1)).toFixed(4) + ")";
-
-    poster.style.opacity = (1 - seg(p, 0.05, 0.19)).toFixed(3);
-    poster.style.transform = "translate(-50%,-50%) translate3d(0," + ((-40 + seg(p, 0, 0.19) * 40).toFixed(0)) + "px,0)";
-    sign.style.opacity = seg(p, 0.84, 0.95).toFixed(3);
-    hint.style.opacity = (1 - seg(p, 0.02, 0.10)).toFixed(3);
+  /* ---------- фаза 1: статичная картинка в углу + таймер ---------- */
+  function setMini(){
+    stage.classList.add('is-mini');
+    ring.setAttribute('stroke-dashoffset', String(CIRC));
+    ring.style.transition = 'none';
+    digits.textContent = '5';
   }
-  requestAnimationFrame(render);
+
+  var t0 = performance.now();
+  var exploded = false;
+
+  function tick(now){
+    var e = (now - t0) / HOLD;
+    if (e < 1) {
+      var frac = 1 - e;                       /* кольцо заполняется */
+      ring.setAttribute('stroke-dashoffset', String(CIRC * frac));
+      var left = Math.ceil(5 * frac);
+      if (digits.textContent !== String(left)) digits.textContent = String(left);
+      requestAnimationFrame(tick);
+    } else {
+      explode();
+    }
+  }
+
+  /* ---------- фаза 2: основа на весь экран, элементы разлетаются ---------- */
+  function explode(){
+    exploded = true;
+    stage.classList.remove('is-mini');
+    stage.classList.add('is-full');
+    digits.textContent = '';
+
+    /* экранная точка солнца → координаты слоя элементов */
+    var sunRect = base.querySelector('#sun').getBoundingClientRect();
+    var ctm = parts.getScreenCTM();
+    var pt = parts.createSVGPoint();
+    pt.x = sunRect.left + sunRect.width / 2;
+    pt.y = sunRect.top + sunRect.height / 2;
+    var local = pt.matrixTransform(ctm.inverse());
+
+    items.forEach(function (it, i){
+      var g = it.node;
+      g.style.transition = 'none';
+      g.style.opacity = '0';
+      /* transform как CSS-свойство: трансформация анимируется надёжно */
+      g.style.transform = 'translate(' + (local.x - it.home.x).toFixed(1) + 'px,' + (local.y - it.home.y).toFixed(1) + 'px) rotate(' + it.rot + 'deg)';
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          g.style.transition = 'transform ' + (SCATTER + i * 60) + 'ms cubic-bezier(.16,.84,.24,1), opacity 420ms ease';
+          g.style.transform = 'translate(0px,0px) rotate(0deg)';
+          g.style.opacity = '1';
+        });
+      });
+    });
+  }
+
+  /* ---------- фаза 3: жизнь (R6) — орбита, дыхание, дрейф ---------- */
+  /* орбита: осколок ходит вокруг солнца (внутри SVG, на CSS-анимации) */
+  /* дыхание форм — CSS-анимация breathe на .form */
+  /* пыль в луче — несколько точек, медленно всплывают */
+  function dust(){
+    var host = document.getElementById('dust');
+    if (!host) return;
+    var r = rnd(97);
+    for (var i = 0; i < 8; i++) {
+      var s = document.createElement('span');
+      s.style.left = (r() * 100).toFixed(1) + '%';
+      s.style.top = (r() * 100).toFixed(1) + '%';
+      s.style.animationDelay = (r() * 12).toFixed(1) + 's';
+      s.style.animationDuration = (9 + r() * 9).toFixed(1) + 's';
+      host.appendChild(s);
+    }
+  }
+  dust();
+
+  setMini();
+  requestAnimationFrame(function(){ requestAnimationFrame(tick); });
+
+  /* пересборка при смене размера окна — картинка всегда в своей геометрии */
+  var lastW = window.innerWidth;
+  window.addEventListener('resize', function () {
+    var nw = window.innerWidth <= 760;
+    if (nw === narrow && Math.abs(window.innerWidth - lastW) < 120) return;
+    lastW = window.innerWidth;
+    location.reload();
+  });
+
+  /* для машины: текущая фаза */
+  window.__stage = { get phase(){ return exploded ? 'full' : 'mini'; }, hold: HOLD };
 })();
