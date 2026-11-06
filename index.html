@@ -3,22 +3,107 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>МАЙЯ — с днём рождения</title>
-<meta name="description" content="Её работа, собранная из её снимков.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23E8DCC3'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23FF4500'/%3E%3C/svg%3E">
+<title>МАЙЯ — коллаж, 3D, моушн</title>
+<meta name="description" content="Рабочий сайт Маи: коллаж, 3D и моушн. @vessperiaa">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23E8DCC3'/%3E%3Ccircle cx='16' cy='16' r='8' fill='%23FF4500'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="stage" role="img" aria-label="Коллаж: солнце из газетной печати и красные стеклянные формы с подписями">
-    <div id="dust" aria-hidden="true"></div>
+<div id="stage">
+  <!-- начальное состояние: только рисунок (человек и солнце) и таймер -->
+  <div id="card">
+    <div class="cfig"><img src="assets/cut/figure.webp" width="196" height="313" alt=""></div>
+    <div class="csun"><img src="assets/cut/sun.webp" width="206" height="329" alt=""></div>
+    <svg class="ring" viewBox="0 0 206 206">
+      <circle class="bg" cx="103" cy="103" r="93"/>
+      <circle id="arc" cx="103" cy="103" r="93" stroke-dasharray="584" stroke-dashoffset="584"/>
+    </svg>
+    <div class="digit" id="digit">5</div>
   </div>
-  <noscript>
-    <p style="color:#E8DCC3;font:16px Georgia,serif;padding:40px">
-      Мне нечего тут рассказывать про то, какая ты. Ты и так знаешь.<br>
-      <a style="color:#FF4500" href="https://www.instagram.com/vessperiaa/">@vessperiaa</a>
-    </p>
-  </noscript>
-  <script src="design.js"></script>
-  <script src="app.js"></script>
+
+  <!-- загруженное состояние: полотно фиксированного размера, масштабируется под экран -->
+  <div id="canvas-d">
+  <div id="compo-d">
+    <div class="halo"></div>
+  <div class="piece " id="p_figure" style="left:496px;top:168px;z-index:6;--rot:1.2deg;--dx:-6px;--dy:9px;--rr:.6deg;--dur:12s;--del:0.4s"><img src="assets/cut/figure.webp" width="352" height="562" alt="Фигура с поднятыми руками"></div>
+  <div class="piece " id="p_sun" style="left:690px;top:52px;z-index:5;--rot:0deg;--dx:0px;--dy:6px;--rr:.6deg;--dur:9s;--del:0s"><img src="assets/cut/sun.webp" width="300" height="479" alt="Солнце"></div>
+  <div class="piece " id="p_fried" style="left:40px;top:486px;z-index:1;--rot:-2.1deg;--dx:7px;--dy:8px;--rr:.6deg;--dur:10.5s;--del:1.1s"><img src="assets/elements/friedrich.webp" width="288" height="264" alt="Пейзаж Фридриха"></div>
+  <div class="piece " id="p_town" style="left:36px;top:736px;z-index:2;--rot:2.4deg;--dx:-7px;--dy:7px;--rr:.6deg;--dur:11s;--del:0.2s"><img src="assets/elements/town.webp" width="232" height="248" alt=""></div>
+  <div class="piece " id="p_crowd" style="left:1120px;top:640px;z-index:3;--rot:-2.6deg;--dx:8px;--dy:-8px;--rr:.6deg;--dur:8.5s;--del:1.6s"><img src="assets/elements/crowd.webp" width="160" height="279" alt=""></div>
+  <div class="piece" id="p_text" style="left:372px;top:330px;z-index:4;--rot:1.6deg;--dx:-5px;--dy:7px;--rr:.5deg;--dur:9.5s;--del:0.8s"><span class="morph"><img src="assets/elements/text.webp" width="186" height="235" alt=""><span class="our">КОЛЛАЖ<br>И ПЕЧАТЬ</span></span></div>
+  <div class="piece" id="p_cap" style="left:40px;top:486px;z-index:7;--rot:-2.1deg;--dx:7px;--dy:8px;--rr:.5deg;--dur:10.5s;--del:1.1s"><span class="morph"><img src="assets/elements/friedrich.webp" width="288" height="264" alt="Пейзаж Фридриха"><span class="our">ФРИДРИХ<br>РЮГЕН</span></span></div>
+  <div class="piece dim" id="goya_h" style="left:1216px;top:404px;z-index:3;--rot:2.8deg;--dx:6px;--dy:-6px;--rr:.6deg;--dur:12.5s;--del:2.2s"><img src="assets/art/goya_print.webp" width="140" height="162" alt="Goya — Gaspar de Guzmán, Count Duke of Olivares on horseback, after Velázquez"></div>
+  <div class="piece dim" id="fried_m" style="left:1316px;top:742px;z-index:3;--rot:-2.4deg;--dx:6px;--dy:-6px;--rr:.6deg;--dur:12.5s;--del:2.2s"><img src="assets/art/friedrich_print.webp" width="196" height="143" alt="Friedrich — Site of a Fire"></div>
+  <div class="piece dim" id="corot_p" style="left:972px;top:690px;z-index:3;--rot:1.9deg;--dx:6px;--dy:-6px;--rr:.6deg;--dur:12.5s;--del:2.2s"><img src="assets/art/corot_print.webp" width="168" height="121" alt="Corot — River with a Distant Tower"></div>
+  <div class="piece dim" id="durer_p" style="left:690px;top:672px;z-index:3;--rot:-3.2deg;--dx:6px;--dy:-6px;--rr:.6deg;--dur:12.5s;--del:2.2s"><img src="assets/art/durer_print.webp" width="118" height="171" alt="Dürer — Cardinal Albrecht of Brandenburg"></div>
+  <div class="piece " id="goya_hs" style="left:700px;top:330px;z-index:4;--rot:1.2deg;--dx:5px;--dy:5px;--rr:.6deg;--dur:13s;--del:2.8s"><img src="assets/art/goya_dark0.webp" width="150" height="173" alt="Силуэт всадника"></div>
+    <div class="orbit" style="left:840px;top:292px">
+    <div class="ray" style="--a:11.0deg;--r:203px;--t:106deg;--dur:51s;--w:655px;--h:1045px"><img src="assets/cut/ray00.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:30.1deg;--r:175px;--t:91deg;--dur:53s;--w:655px;--h:1045px"><img src="assets/cut/ray01.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:47.4deg;--r:176px;--t:79deg;--dur:66s;--w:655px;--h:1045px"><img src="assets/cut/ray02.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:70.7deg;--r:157px;--t:98deg;--dur:65s;--w:655px;--h:1045px"><img src="assets/cut/ray03.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:111.1deg;--r:192px;--t:84deg;--dur:50s;--w:655px;--h:1045px"><img src="assets/cut/ray04.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:145.8deg;--r:184px;--t:96deg;--dur:73s;--w:655px;--h:1045px"><img src="assets/cut/ray05.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:178.4deg;--r:172px;--t:100deg;--dur:63s;--w:655px;--h:1045px"><img src="assets/cut/ray06.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:195.7deg;--r:188px;--t:83deg;--dur:51s;--w:655px;--h:1045px"><img src="assets/cut/ray07.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:220.9deg;--r:191px;--t:94deg;--dur:66s;--w:655px;--h:1045px"><img src="assets/cut/ray08.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:252.9deg;--r:162px;--t:77deg;--dur:61s;--w:655px;--h:1045px"><img src="assets/cut/ray09.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:285.1deg;--r:163px;--t:75deg;--dur:52s;--w:655px;--h:1045px"><img src="assets/cut/ray10.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:292.6deg;--r:167px;--t:93deg;--dur:81s;--w:655px;--h:1045px"><img src="assets/cut/ray11.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:327.9deg;--r:172px;--t:82deg;--dur:60s;--w:655px;--h:1045px"><img src="assets/cut/ray12.webp" width="655" height="1045" alt=""></div>
+    </div>
+  </div>
+    <div class="side">
+      <img class="label" src="assets/elements/label.webp" alt="">
+      <h1>МАЙЯ</h1>
+      <svg class="mark" viewBox="0 0 240 24"><path d="M4 16 C 58 9, 116 19, 172 11 S 232 13, 236 9"/></svg>
+      <p class="roles">КОЛЛАЖ · 3D · МОУШН</p>
+      <p class="ig">@vessperiaa</p>
+    </div>
+    <div class="foot">КУРСОВАЯ — КОЛЛАЖ, ПЕЧАТЬ, МОНТАЖ</div>
+  </div>
+
+  <!-- мобильная раскладка -->
+  <div id="canvas-m">
+  <div id="compo-m">
+    <div class="halo"></div>
+  <div class="piece " id="m_figure" style="left:44px;top:292px;z-index:6;--rot:1.2deg;--dx:-3px;--dy:4px;--rr:.6deg;--dur:12s;--del:0.4s"><img src="assets/cut/figure.webp" width="132" height="211" alt="Фигура"></div>
+  <div class="piece " id="m_sun" style="left:152px;top:118px;z-index:5;--rot:0deg;--dx:0px;--dy:3px;--rr:.6deg;--dur:9s;--del:0s"><img src="assets/cut/sun.webp" width="170" height="271" alt="Солнце"></div>
+  <div class="piece " id="m_fried" style="left:10px;top:610px;z-index:1;--rot:-2.1deg;--dx:4px;--dy:4px;--rr:.6deg;--dur:10.5s;--del:1.1s"><img src="assets/elements/friedrich.webp" width="124" height="113" alt="Пейзаж Фридриха"></div>
+  <div class="piece" id="m_text" style="left:146px;top:612px;z-index:4;--rot:1.6deg;--dx:-3px;--dy:3px;--rr:.5deg;--dur:9.5s;--del:0.8s"><span class="morph"><img src="assets/elements/text.webp" width="102" height="129" alt=""><span class="our">КОЛЛАЖ<br>И ПЕЧАТЬ</span></span></div>
+  <div class="piece dim" id="m_goya" style="left:248px;top:610px;z-index:3;--rot:2.8deg;--dx:3px;--dy:-3px;--rr:.6deg;--dur:12.5s;--del:2.2s"><img src="assets/art/goya_print.webp" width="108" height="125" alt="Гойя"></div>
+  <div class="piece " id="m_town" style="left:12px;top:724px;z-index:2;--rot:2.4deg;--dx:-3px;--dy:3px;--rr:.6deg;--dur:11s;--del:0.2s"><img src="assets/elements/town.webp" width="104" height="111" alt=""></div>
+    <div class="orbit" style="left:237px;top:254px">
+    <div class="ray" style="--a:7.2deg;--r:104px;--t:80deg;--dur:57s;--w:655px;--h:1045px"><img src="assets/cut/ray00.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:35.1deg;--r:109px;--t:103deg;--dur:62s;--w:655px;--h:1045px"><img src="assets/cut/ray01.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:56.6deg;--r:115px;--t:94deg;--dur:94s;--w:655px;--h:1045px"><img src="assets/cut/ray02.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:74.4deg;--r:117px;--t:72deg;--dur:70s;--w:655px;--h:1045px"><img src="assets/cut/ray03.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:98.4deg;--r:112px;--t:97deg;--dur:95s;--w:655px;--h:1045px"><img src="assets/cut/ray04.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:146.4deg;--r:116px;--t:92deg;--dur:95s;--w:655px;--h:1045px"><img src="assets/cut/ray05.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:172.6deg;--r:97px;--t:109deg;--dur:69s;--w:655px;--h:1045px"><img src="assets/cut/ray06.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:185.9deg;--r:88px;--t:89deg;--dur:61s;--w:655px;--h:1045px"><img src="assets/cut/ray07.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:232.8deg;--r:116px;--t:79deg;--dur:57s;--w:655px;--h:1045px"><img src="assets/cut/ray08.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:250.0deg;--r:91px;--t:92deg;--dur:88s;--w:655px;--h:1045px"><img src="assets/cut/ray09.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:270.5deg;--r:99px;--t:106deg;--dur:72s;--w:655px;--h:1045px"><img src="assets/cut/ray10.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:300.5deg;--r:115px;--t:103deg;--dur:91s;--w:655px;--h:1045px"><img src="assets/cut/ray11.webp" width="655" height="1045" alt=""></div>
+    <div class="ray" style="--a:337.2deg;--r:99px;--t:98deg;--dur:89s;--w:655px;--h:1045px"><img src="assets/cut/ray12.webp" width="655" height="1045" alt=""></div>
+    </div>
+  </div>
+    <div class="side">
+      <img class="label" src="assets/elements/label.webp" alt="">
+      <h1>МАЙЯ</h1>
+      <svg class="mark" viewBox="0 0 240 24"><path d="M4 16 C 58 9, 116 19, 172 11 S 232 13, 236 9"/></svg>
+      <p class="roles">КОЛЛАЖ · 3D · МОУШН</p>
+      <p class="ig">@vessperiaa</p>
+    </div>
+    <div class="foot">КУРСОВАЯ — КОЛЛАЖ, ПЕЧАТЬ, МОНТАЖ</div>
+  </div>
+</div>
+<noscript>
+  <p style="color:#26221B;font:16px Georgia,serif;padding:40px;background:#EDE3CC">
+    Мой профиль — <a style="color:#FF4500" href="https://www.instagram.com/vessperiaa/">@vessperiaa</a>
+  </p>
+</noscript>
+<script src="app.js"></script>
 </body>
 </html>
