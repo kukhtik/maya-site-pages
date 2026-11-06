@@ -48,6 +48,11 @@
   });
 
   /* ---------- фаза 1: статичная картинка в углу + таймер ---------- */
+  /* Для prefers-reduced-motion фазы не нужны: человек не просил анимации —
+     показываем сразу готовую картинку, без 5 секунд ожидания и без разлёта. */
+  var reduced = window.matchMedia &&
+                window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   function setMini(){
     stage.classList.add('is-mini');
     ring.setAttribute('stroke-dashoffset', String(CIRC));
@@ -88,6 +93,13 @@
 
     items.forEach(function (it, i){
       var g = it.node;
+      if (reduced) {
+        /* без анимации: элемент сразу на своём месте */
+        g.style.transition = 'none';
+        g.style.transform = 'translate(0px,0px) rotate(0deg)';
+        g.style.opacity = '1';
+        return;
+      }
       g.style.transition = 'none';
       g.style.opacity = '0';
       /* transform как CSS-свойство: трансформация анимируется надёжно */
@@ -121,8 +133,21 @@
   }
   dust();
 
-  setMini();
-  requestAnimationFrame(function(){ requestAnimationFrame(tick); });
+  if (reduced) {
+    /* сразу финальное состояние: без ожидания, без разлёта, без таймера */
+    stage.classList.remove('is-mini');
+    stage.classList.add('is-full');
+    exploded = true;
+    digits.textContent = '';
+    items.forEach(function (it){
+      it.node.style.transition = 'none';
+      it.node.style.opacity = '1';
+      it.node.style.transform = 'translate(0px,0px) rotate(0deg)';
+    });
+  } else {
+    setMini();
+    requestAnimationFrame(function(){ requestAnimationFrame(tick); });
+  }
 
   /* пересборка при смене размера окна — картинка всегда в своей геометрии */
   var lastW = window.innerWidth;

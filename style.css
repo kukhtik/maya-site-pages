@@ -65,6 +65,8 @@ a.ig{color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,240,244
 @media (prefers-reduced-motion:reduce){
   .layer--base{transition:none !important}
   .is-mini .layer--base{transform:none !important}
-  .form{transition:none !important}
+  .form{transition:none !important;animation:none !important}
+  .form-wrap{transition:none !important}
+  #orbit{animation:none !important}
   #dust{display:none}
 }
