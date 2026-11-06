@@ -133,6 +133,10 @@
     location.reload();
   });
 
-  /* для машины: текущая фаза */
-  window.__stage = { get phase(){ return exploded ? 'full' : 'mini'; }, hold: HOLD };
+  /* для машины: текущая фаза и домашние места элементов */
+  window.__stage = {
+    get phase(){ return exploded ? 'full' : 'mini'; },
+    hold: HOLD,
+    homes: cfg.forms.map(function (f) { return [f[0], f[1]]; })
+  };
 })();
