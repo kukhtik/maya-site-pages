@@ -1,0 +1,214 @@
+/* ============================================================
+   maya-site v4 — «Нарезка».
+   Единый язык: бумага её работ, печатная палитра, слои с тенями.
+   Театр — композиция: глубина, свет, плоскости.
+   ============================================================ */
+
+@font-face{font-family:'Playfair Display';src:url(fonts/playfair-400-latin.woff2) format('woff2');font-weight:400 900;font-style:normal;font-display:swap;}
+@font-face{font-family:'Playfair Display';src:url(fonts/playfair-400-cyrillic.woff2) format('woff2');font-weight:400 900;font-style:normal;font-display:swap;}
+@font-face{font-family:'Golos Text';src:url(fonts/golos-400-latin.woff2) format('woff2');font-weight:100 900;font-style:normal;font-display:swap;}
+@font-face{font-family:'Golos Text';src:url(fonts/golos-400-cyrillic.woff2) format('woff2');font-weight:100 900;font-style:normal;font-display:swap;}
+@font-face{font-family:'JetBrains Mono';src:url(fonts/jbmono-400-latin.woff2) format('woff2');font-weight:100 900;font-style:normal;font-display:swap;}
+@font-face{font-family:'JetBrains Mono';src:url(fonts/jbmono-400-cyrillic.woff2) format('woff2');font-weight:100 900;font-style:normal;font-display:swap;}
+
+:root{
+  --paper:#E8DCC3;      /* её бумага */
+  --sun:#FF4500;        /* её солнце — единственный цветной акцент */
+  --cobalt:#0047AB;     /* её пейзажи */
+  --olive:#556B2F;      /* её пейзажи */
+  --graphite:#333333;   /* печатная краска */
+  --magenta:#B4308C;    /* её 3D-объект — свет */
+
+  --serif:'Playfair Display',Georgia,'Times New Roman',serif;
+  --sans:'Golos Text','Helvetica Neue',Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+
+  --fw:420px; --fh:667px; --sh:55.58px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:#1B1613;color:var(--graphite);
+  font-family:var(--sans);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+img{display:block;max-width:100%}
+
+/* ============================================================
+   СЦЕНА
+   ============================================================ */
+.stage{
+  position:sticky;top:0;height:100svh;overflow:hidden;
+  background:
+    radial-gradient(72% 56% at 26% 8%, rgba(255,252,244,.95), rgba(255,252,244,0) 62%),
+    linear-gradient(155deg,#F3EADA 0%, var(--paper) 46%, #D6C8AC 100%);
+}
+.stage::after{ /* бумажное зерно */
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:9;
+  opacity:.45;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.88' numOctaves='3'/%3E%3C/filter%3E%3Crect width='170' height='170' filter='url(%23n)' opacity='.36'/%3E%3C/svg%3E");
+}
+body{height:460vh}
+
+/* ============================================================
+   ГЛУБИНА: 3D-объект и вырезки
+   ============================================================ */
+.depth{position:absolute;inset:0;z-index:1;perspective:1700px;perspective-origin:50% 46%;transform-style:preserve-3d}
+
+.depth--glass{left:auto;right:0;width:52%;}
+.depth--glass .glow{
+  position:absolute;left:50%;top:46%;width:520px;height:520px;transform:translate(-50%,-50%);
+  background:radial-gradient(circle, rgba(180,48,140,.34), rgba(180,48,140,.10) 42%, transparent 70%);
+  filter:blur(28px);
+}
+.depth--glass img{
+  position:absolute;left:50%;top:50%;width:360px;margin:-250px 0 0 -180px;
+  filter:drop-shadow(0 30px 46px rgba(60,20,40,.42));
+}
+
+.cut{
+  position:absolute;
+  filter:drop-shadow(0 18px 30px rgba(70,50,20,.40));
+  will-change:transform,opacity;
+}
+.cut--1{width:clamp(120px,15vw,210px);left:6%;top:22%;--rot:-5deg}
+.cut--2{width:clamp(96px,12vw,168px);left:14%;top:58%;--rot:3.5deg}
+.cut--3{width:clamp(78px,9vw,124px);left:27%;top:16%;--rot:6deg}
+.cut--4{width:clamp(140px,18vw,250px);right:5%;top:16%;--rot:-3deg}
+.cut--5{width:clamp(120px,15vw,208px);right:9%;top:56%;--rot:4deg}
+
+/* ============================================================
+   СРЕДНИЙ ПЛАН: полосы
+   ============================================================ */
+.frame{
+  position:absolute;z-index:4;
+  left:50%;top:50%;
+  width:var(--fw);height:var(--fh);
+  margin-left:calc(var(--fw) / -2);margin-top:calc(var(--fh) / -2);
+  perspective:1700px;perspective-origin:50% 46%;
+}
+.frame__fallback{width:100%;height:auto;box-shadow:0 30px 60px rgba(60,42,20,.4)}
+.strip{
+  position:absolute;left:0;top:calc(var(--sh) * var(--i));
+  width:var(--fw);height:var(--sh);overflow:hidden;
+  will-change:transform;
+  box-shadow:0 10px 24px rgba(60,42,20,.32);
+}
+.strip .s{position:absolute;inset:0;background-repeat:no-repeat}
+.strip .s.photo{background-size:cover;opacity:1}
+.strip .s.col{background-size:var(--fw) var(--fh);background-position:0 calc(var(--sh) * var(--i) * -1);opacity:0}
+
+/* ============================================================
+   ПЛОСКОСТИ С ТЕКСТОМ
+   ============================================================ */
+.flat{
+  position:absolute;z-index:7;
+  width:min(310px,74vw);
+  background:#FBF6EA;border:1px solid rgba(51,51,51,.2);
+  padding:17px 20px 19px;
+  box-shadow:0 20px 42px rgba(60,42,20,.36);
+  opacity:0;
+}
+/* полоска скотча: плоскость приклеена к сцене, а не нарисована */
+.flat::before{
+  content:"";position:absolute;left:50%;top:-10px;
+  width:58px;height:20px;transform:translateX(-50%) rotate(-2.2deg);
+  background:rgba(255,255,255,.42);
+  box-shadow:0 1px 2px rgba(60,42,20,.12);
+}
+.flat h2{
+  margin:0 0 7px;
+  font-family:var(--serif);font-weight:700;font-size:19px;line-height:1.15;
+}
+.flat .l{
+  margin:0;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ash, #8a7a63);
+}
+.flat hr{border:0;border-top:1px solid rgba(51,51,51,.18);margin:10px 0}
+.flat .b{margin:0;font-size:11.5px;line-height:1.6;opacity:.62;max-width:34ch}
+.flat--1{left:7%;top:19%;--rot:-.8deg}
+.flat--2{right:7%;top:44%;--rot:.7deg}
+.flat--3{left:9%;top:61%;--rot:-.5deg}
+
+/* ============================================================
+   АФИША И ТИТРЫ
+   ============================================================ */
+.poster{
+  position:absolute;z-index:8;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:min(500px,86vw);
+  background:#FBF6EA;border:1px solid rgba(51,51,51,.18);
+  padding:30px 34px 24px;text-align:center;
+  box-shadow:0 26px 56px rgba(60,42,20,.42);
+}
+.poster h1{
+  margin:0;font-family:var(--serif);font-weight:700;
+  font-size:clamp(3.4rem,11vw,6rem);line-height:.92;letter-spacing:-.02em;
+}
+.poster .k{margin:12px 0 0;font-size:15px;opacity:.62}
+.poster .h{
+  margin:12px 0 0;font-family:var(--mono);font-size:11px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--sun);
+}
+.poster .t{
+  margin:16px 0 0;padding-top:12px;border-top:1px solid rgba(51,51,51,.2);
+  font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;opacity:.55;
+}
+
+.sign{
+  position:absolute;z-index:8;left:50%;bottom:7%;
+  transform:translateX(-50%);
+  width:min(460px,88vw);text-align:center;
+  opacity:0;
+}
+.sign .n{
+  margin:0;font-family:var(--serif);font-weight:700;font-size:26px;letter-spacing:.02em;
+}
+.sign .s{
+  margin:8px 0 0;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--sun);
+}
+.sign hr{border:0;border-top:1px solid rgba(51,51,51,.2);margin:14px auto 12px;width:180px}
+.sign .b{margin:0;font-size:12px;opacity:.6;font-family:var(--sans)}
+.sign .g{
+  margin:14px 0 0;font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.7;
+}
+.sign .link{
+  display:inline-block;margin-top:12px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;
+  color:var(--sun);text-decoration:none;border-bottom:1px solid rgba(255,69,0,.45);
+}
+
+.hint{
+  position:absolute;z-index:9;left:50%;bottom:20px;transform:translateX(-50%);
+  margin:0;font-family:var(--mono);font-size:10px;
+  letter-spacing:.26em;text-transform:uppercase;opacity:.45;
+}
+
+/* ============================================================
+   УЗКИЙ ЭКРАН
+   ============================================================ */
+@media (max-width:760px){
+  .depth--glass{width:78%;right:-8%}
+  .depth--glass img{width:210px;margin:-150px 0 0 -105px}
+  .cut--1{left:2%;top:16%}
+  .cut--2{left:8%;top:64%}
+  .cut--3{left:20%;top:10%}
+  .cut--4{right:2%;top:14%}
+  .cut--5{right:4%;top:62%}
+  .flat{width:min(270px,76vw);padding:14px 16px 16px}
+  .flat--1{left:5%;top:13%}
+  .flat--2{right:4%;top:40%}
+  .flat--3{left:6%;top:66%}
+  .sign{bottom:5%}
+}
+
+/* ============================================================
+   МЕНЬШЕ ДВИЖЕНИЯ — показываем собранную работу
+   ============================================================ */
+@media (prefers-reduced-motion:reduce){
+  .strip .s.photo{opacity:0 !important}
+  .strip .s.col{opacity:1 !important}
+  .flat,.poster,.sign,.hint{opacity:1 !important;transform:none !important}
+  .cut{opacity:.5 !important}
+}

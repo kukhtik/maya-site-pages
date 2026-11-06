@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>МАЙЯ — программа одного спектакля</title>
+<meta name="description" content="Её работа, собранная из её снимков. Программа одного спектакля.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main class="stage" id="stage">
+
+  <!-- дальний план: её 3D-объект -->
+  <div class="depth depth--glass" id="glass">
+    <span class="glow" aria-hidden="true"></span>
+    <img src="assets/work_glass.jpg" alt="её 3D-работа: сатиновый объект под стеклянным куполом, нити">
+  </div>
+
+  <!-- вырезки, парящие в глубине -->
+  <div class="depth depth--cuts" id="cuts">
+    <img class="cut cut--1" src="assets/cut_01.webp" alt="вырезка из её фотографии">
+    <img class="cut cut--2" src="assets/cut_02.webp" alt="вырезка из её фотографии">
+    <img class="cut cut--3" src="assets/cut_03.webp" alt="вырезка: надпись meow">
+    <img class="cut cut--4" src="assets/cut_04.webp" alt="вырезка: солнце из её курсовой">
+    <img class="cut cut--5" src="assets/cut_05.webp" alt="вырезка: кусок её 3D-работы">
+  </div>
+
+  <!-- средний план: полосы, которые собираются в её курсовую -->
+  <div class="frame" id="frame">
+    <noscript><img class="frame__fallback" src="assets/work_collage.jpg" alt="её курсовая: коллаж из газетной печати, музейных этикеток и пейзажей"></noscript>
+  </div>
+
+  <!-- плоскости с текстом -->
+  <article class="flat flat--1" id="flat1">
+    <h2>Фото и личный архив</h2>
+    <p class="l">снимки, каомодзи, своё</p>
+    <hr>
+    <p class="b">То, что не попадает в портфолио: лента, случайное, тёплое.</p>
+  </article>
+
+  <article class="flat flat--2" id="flat2">
+    <h2>Коллаж и графика</h2>
+    <p class="l">печать, живопись, монтаж</p>
+    <hr>
+    <p class="b">Газетные полосы, музейные этикетки, пейзажи — всё в одном кадре.</p>
+  </article>
+
+  <article class="flat flat--3" id="flat3">
+    <h2>3D и моушн</h2>
+    <p class="l">объект, который светится изнутри</p>
+    <hr>
+    <p class="b">Сатиновое стекло, купол, нити. Четыре кадра одного объекта.</p>
+  </article>
+
+  <!-- афиша -->
+  <div class="poster" id="poster">
+    <h1>МАЙЯ</h1>
+    <p class="k">✧°`maya`°✧</p>
+    <p class="h">@vessperiaa</p>
+    <p class="t">программа одного спектакля</p>
+  </div>
+
+  <!-- финальные титры -->
+  <div class="sign" id="sign">
+    <p class="n">С ДНЁМ РОЖДЕНИЯ</p>
+    <p class="s">её работа, собранная из её снимков</p>
+    <hr>
+    <p class="b">Пока ты читаешь это, стопка уже разобрана и собрана заново. Потому что она всегда была твоей.</p>
+    <p class="g">— твой брат</p>
+    <a class="link" href="https://www.instagram.com/vessperiaa/" target="_blank" rel="noopener">@vessperiaa</a>
+  </div>
+
+  <p class="hint" id="hint">листайте</p>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
