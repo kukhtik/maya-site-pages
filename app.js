@@ -1,17 +1,13 @@
-/* v7 — механика: 5 секунд статичная картинка с таймером, потом разлёт,
-   потом жизнь. Её текст на кусках плавно меняется на наш. */
+/* v7 — механика: старт по кнопке на холсте, разлёт на куски,
+   жизнь полотна, инфо на элементах (наведение / тап). */
 (function () {
   "use strict";
-  var HOLD = 5000;
-  var CIRC = 584;
   var stage = document.getElementById("stage");
-  var arc = document.getElementById("arc");
-  var digit = document.getElementById("digit");
+  var btn = document.getElementById("start");
   var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function open() {
     stage.classList.add("is-open");
-    if (digit) digit.textContent = "";
     setTimeout(function () { stage.classList.add("is-morph"); }, 900);
     setTimeout(function () { stage.classList.add("is-live"); }, 1400);
   }
@@ -38,18 +34,16 @@
 
   if (reduced) {                       /* без анимаций — сразу готовое полотно */
     stage.classList.add("is-open", "is-morph", "is-live");
-    if (digit) digit.textContent = "";
     return;
   }
 
-  var t0 = performance.now();
-  function tick(now) {
-    var e = Math.min(1, (now - t0) / HOLD);
-    var left = Math.ceil(5 * (1 - e));
-    if (arc) arc.setAttribute("stroke-dashoffset", String(CIRC * e));
-    if (digit && digit.textContent !== String(left)) digit.textContent = String(left);
-    if (e < 1) requestAnimationFrame(tick);
-    else open();
-  }
-  requestAnimationFrame(tick);
+  if (btn) btn.addEventListener("click", open);
+
+  /* инфо на кусках: на десктопе — наведение (CSS), на тач-экране — тап */
+  document.addEventListener("click", function (e) {
+    var tapped = e.target.closest ? e.target.closest(".piece") : null;
+    var old = document.querySelectorAll(".piece.tap");
+    for (var i = 0; i < old.length; i++) old[i].classList.remove("tap");
+    if (tapped) tapped.classList.add("tap");
+  });
 })();
