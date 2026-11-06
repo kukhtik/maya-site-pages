@@ -40,17 +40,25 @@ body{font-family:'Playfair Display',Georgia,serif;color:var(--ink)}
 #canvas-d{width:1600px;height:1000px}
 #canvas-m{display:none;width:390px;height:844px}
 #compo-d,#compo-m{position:absolute;inset:0}
-.piece{position:absolute;will-change:transform;
-  filter:drop-shadow(2px 3px 2px rgba(38,30,14,.42)) drop-shadow(10px 17px 18px rgba(38,30,14,.22));
-  transition:transform 1150ms cubic-bezier(.16,.84,.24,1)}
+.piece{position:absolute;opacity:0;
+  transform:translate(var(--sx),var(--sy)) scale(.3) rotate(calc(var(--rot) + 18deg));
+  transition:transform 1150ms cubic-bezier(.16,.84,.24,1),opacity .45s ease;
+  transition-delay:var(--sd,0s)}
+.is-open .piece{transform:none;opacity:1}
+.piece.shadow{filter:drop-shadow(2px 3px 2px rgba(38,30,14,.42)) drop-shadow(10px 17px 18px rgba(38,30,14,.22))}
+.piece.det{box-shadow:0 3px 6px rgba(38,30,14,.34),0 11px 20px rgba(38,30,14,.18)}
+.piece.strip{opacity:.96}
+.piece.chip{opacity:.9;box-shadow:0 2px 4px rgba(38,30,14,.26)}
 .piece img{display:block}
 .piece.dim{opacity:.92}
 @keyframes drift{
   0%{transform:translate(0,0) rotate(var(--rot))}
   50%{transform:translate(var(--dx),var(--dy)) rotate(calc(var(--rot) + var(--rr)))}
   100%{transform:translate(0,0) rotate(var(--rot))}}
-.is-live .piece{animation:drift var(--dur) ease-in-out var(--del) infinite alternate}
+.piece.live{will-change:transform}
+.is-live .piece.live{animation:drift var(--dur) ease-in-out var(--del) infinite alternate}
 .piece:hover{animation-play-state:paused;z-index:30}
+.ray.thin img{filter:none}
 
 /* её текст на кусках плавно меняется на наш */
 .morph{position:relative;display:inline-block}
@@ -68,6 +76,7 @@ body{font-family:'Playfair Display',Georgia,serif;color:var(--ink)}
 
 /* орбита лучей вокруг солнца */
 .orbit{position:absolute;width:0;height:0;z-index:8}
+.ray{will-change:transform}
 .ray{position:absolute;left:0;top:0;width:var(--w);height:var(--h);
   transform:rotate(var(--a)) translateX(var(--r))}
 .ray img{display:block;transform:rotate(var(--t));transform-origin:50% 50%;
@@ -115,5 +124,6 @@ body{font-family:'Playfair Display',Georgia,serif;color:var(--ink)}
 
 @media (prefers-reduced-motion:reduce){
   .piece,#card,.side,.foot,.morph img,.morph .our{transition:none !important}
+  .piece{opacity:1;transform:none !important}
   .piece,.ray{animation:none !important}
 }
