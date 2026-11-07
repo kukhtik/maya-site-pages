@@ -50,6 +50,10 @@
       stage.style.setProperty("--py", ty.toFixed(1) + "px");
     }
     window.addEventListener("pointermove", function (e) {
+      /* пока курсор над куском — слои стоят: иначе кусок уедет из-под
+         курсора и подпись погаснет раньше, чем её прочитают */
+      var under = document.elementFromPoint(e.clientX, e.clientY);
+      if (under && under.closest && under.closest(".piece")) return;
       tx = (e.clientX / window.innerWidth - 0.5) * 36;
       ty = (e.clientY / window.innerHeight - 0.5) * 26;
       if (!raf) raf = requestAnimationFrame(apply);
