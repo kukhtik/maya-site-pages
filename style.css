@@ -19,6 +19,51 @@ body{font-family:'Playfair Display',Georgia,serif;color:var(--ink)}
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
   mix-blend-mode:multiply}
 
+/* ===== второй экран: 3D-работа ===== */
+#screen2{position:relative;min-height:100vh;background:#15110F;color:#EFE7D6;
+  overflow:hidden;font-family:'Playfair Display',Georgia,serif}
+.s2wrap{position:relative;min-height:100vh;max-width:1400px;margin:0 auto;padding:9vh 6vw}
+.s2sheet{position:relative;z-index:3;width:min(360px,42vw);transform:rotate(-2deg);
+  box-shadow:0 30px 70px rgba(0,0,0,.6)}
+.s2sheet img{display:block;width:100%}
+.s2type{position:relative;z-index:4;margin-top:-6vh;margin-left:min(400px,44vw)}
+.s2type h2{margin:0;font:400 clamp(26px,3.4vw,46px)/1.05 'Playfair Display',Georgia,serif;
+  letter-spacing:1.5px;color:#F6EEDD}
+.s2type p{margin:14px 0 0;font:11px/1.9 'JetBrains Mono',monospace;letter-spacing:2.6px;
+  color:rgba(239,231,214,.62)}
+.s2type .ig2{display:inline-block;margin-top:16px;font:12px/1.6 'JetBrains Mono',monospace;
+  letter-spacing:2.4px;color:#FF6A2A;text-decoration:none;position:relative}
+.s2type .ig2::after{content:'';position:absolute;left:0;right:0;bottom:-3px;height:1px;
+  background:#FF6A2A;transform:scaleX(0);transform-origin:left;
+  transition:transform .35s cubic-bezier(.22,.61,.36,1)}
+.s2type .ig2:hover::after{transform:scaleX(1)}
+.s2photos{position:relative;z-index:3;margin-top:7vh;display:flex;gap:18px;flex-wrap:wrap}
+.s2photos img{width:min(190px,22vw);box-shadow:0 14px 34px rgba(0,0,0,.55);
+  transform:rotate(var(--rot,0deg))}
+.s2photos img:nth-child(1){--rot:-2.4deg}
+.s2photos img:nth-child(2){--rot:1.6deg}
+.s2photos img:nth-child(3){--rot:-1.2deg}
+.s2photos img:nth-child(4){--rot:2.8deg}
+/* маджентовые объекты её 3D-работы на медленной орбите */
+.s2orbit{position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(60% 50% at 28% 34%, rgba(180,48,140,.20), rgba(21,17,15,0) 70%)}
+.s2obj{position:absolute;z-index:2;pointer-events:none;
+  filter:drop-shadow(0 18px 40px rgba(0,0,0,.55));
+  animation:s2float var(--d,26s) ease-in-out var(--dl,0s) infinite alternate}
+@keyframes s2float{
+  0%{transform:translate(0,0) rotate(var(--r0,0deg))}
+  50%{transform:translate(var(--dx,18px),var(--dy,-26px)) rotate(calc(var(--r0,0deg) + var(--dr,4deg)))}
+  100%{transform:translate(0,0) rotate(var(--r0,0deg))}}
+
+/* прокрутка открывается после разлёта */
+body{overflow:hidden}
+body.opened{overflow-y:auto}
+#hint{position:absolute;right:56px;bottom:78px;z-index:30;opacity:0;transition:opacity .6s ease .9s;
+  font:10px/1 'JetBrains Mono',monospace;letter-spacing:3px;color:rgba(38,30,14,.55);
+  pointer-events:none}
+.is-open #hint{opacity:1}
+#hint::after{content:'93';display:block;margin-top:7px;font-size:15px;text-align:center}
+
 /* ===== начальное состояние: рисунок + таймер ===== */
 #card{position:absolute;right:56px;top:48px;width:300px;z-index:20;
   transition:opacity .5s ease, transform .9s cubic-bezier(.16,.84,.24,1);
@@ -65,11 +110,13 @@ body{font-family:'Playfair Display',Georgia,serif;color:var(--ink)}
   50%{transform:translate(var(--dx),var(--dy)) rotate(calc(var(--rot) + var(--rr)))}
   100%{transform:translate(0,0) rotate(var(--rot))}}
 .is-live .piece.live{animation:drift var(--dur) ease-in-out var(--del) infinite alternate}
+@keyframes turn{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.is-live .piece.turn{animation:turn var(--tdur,80s) linear infinite}
 .piece:hover{animation-play-state:paused;z-index:999}
 #stage:has(.piece:hover) .piece:not(:hover){opacity:.5;transition:opacity .25s ease}
 .piece:hover .info{z-index:999}
 .piece img{transition:transform .28s cubic-bezier(.22,.61,.36,1)}
-.piece:hover img{transform:scale(1.05)}
+.piece:hover img{filter:brightness(1.06)}
 .piece:hover{box-shadow:0 12px 26px rgba(38,30,14,.30),0 34px 66px rgba(38,30,14,.20)}
 
 /* волна света по бумаге в момент разлёта */
@@ -107,8 +154,10 @@ body{font-family:'Playfair Display',Georgia,serif;color:var(--ink)}
 .is-open .piece.pulse{animation:sunpop 640ms cubic-bezier(.22,.8,.2,1) 240ms 1 both}
 .is-live .piece.live:hover,.is-live .piece.live.tap{animation-play-state:paused}
 .piece .info{position:absolute;left:0;top:100%;margin-top:8px;z-index:60;
+  max-width:260px;white-space:normal;
   font:10px/1.45 'JetBrains Mono',monospace;letter-spacing:.7px;color:#241F18;
-  background:#F7F2E5;border:1px solid rgba(38,30,14,.28);padding:6px 10px 5px;white-space:nowrap;
+  background:#F7F2E5;border:1px solid rgba(38,30,14,.28);padding:6px 10px 5px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
   box-shadow:0 6px 16px rgba(38,30,14,.34),0 1px 0 rgba(255,255,255,.6) inset;
   opacity:0;transform:translateY(-8px) rotate(calc(var(--rot) * -1));
   transform-origin:0 0;
@@ -178,6 +227,16 @@ body{font-family:'Playfair Display',Georgia,serif;color:var(--ink)}
   #canvas-m .side .ig{margin-left:18px;font-size:9px}
   #canvas-m .side .mark{width:130px;height:16px;margin:6px 0 0 16px}
   #canvas-m .foot{right:20px;bottom:30px;font-size:9px}
+  #screen2{min-height:auto}
+  .s2wrap{padding:7vh 7vw 12vh}
+  .s2sheet{width:62vw;margin:0 auto}
+  .s2type{margin:26px 0 0;margin-left:0}
+  .s2type h2{font-size:27px}
+  .s2type p{font-size:9px;letter-spacing:2px}
+  .s2photos{gap:10px;margin-top:30px}
+  .s2photos img{width:42vw}
+  .s2obj{filter:drop-shadow(0 10px 24px rgba(0,0,0,.5))}
+  #hint{right:14px;bottom:74px;font-size:9px}
   .morph .our{font-size:12px;letter-spacing:.6px;padding:7px 9px 6px;
     background:rgba(246,241,228,.92);border:1px solid rgba(38,30,14,.22);
     box-shadow:0 4px 10px rgba(38,30,14,.22);

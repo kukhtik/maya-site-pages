@@ -8,6 +8,7 @@
 
   function open() {
     stage.classList.add("is-open");
+    document.body.classList.add("opened");
     setTimeout(function () { stage.classList.add("is-morph"); }, 900);
     setTimeout(function () { stage.classList.add("is-live"); }, 1400);
   }
