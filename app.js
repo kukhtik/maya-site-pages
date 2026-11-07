@@ -39,6 +39,26 @@
 
   if (btn) btn.addEventListener("click", open);
 
+  /* параллакс: курсор смещает слои глубины (только мышь, не тач) */
+  var fine = window.matchMedia && window.matchMedia("(pointer: fine)").matches;
+  if (fine && !reduced) {
+    var raf = 0, tx = 0, ty = 0;
+    function apply() {
+      raf = 0;
+      stage.style.setProperty("--px", tx.toFixed(1) + "px");
+      stage.style.setProperty("--py", ty.toFixed(1) + "px");
+    }
+    window.addEventListener("pointermove", function (e) {
+      tx = (e.clientX / window.innerWidth - 0.5) * 36;
+      ty = (e.clientY / window.innerHeight - 0.5) * 26;
+      if (!raf) raf = requestAnimationFrame(apply);
+    }, {passive: true});
+    window.addEventListener("pointerleave", function () {
+      tx = 0; ty = 0;
+      if (!raf) raf = requestAnimationFrame(apply);
+    });
+  }
+
   /* инфо на кусках: на десктопе — наведение (CSS), на тач-экране — тап */
   document.addEventListener("click", function (e) {
     var tapped = e.target.closest ? e.target.closest(".piece") : null;
