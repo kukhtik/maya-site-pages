@@ -171,7 +171,7 @@ body.opened{overflow-y:auto}
 @keyframes open{0%{opacity:0}100%{opacity:1}}
 .is-open .ray{animation:open 700ms cubic-bezier(.16,.84,.24,1) var(--radelay,0ms) 1 both}
 @keyframes sunpop{0%{transform:scale(.90)}62%{transform:scale(1.035)}100%{transform:scale(1)}}
-.is-open .piece.pulse{animation:sunpop 640ms cubic-bezier(.22,.8,.2,1) 240ms 1 both}
+.is-open .piece.pulse>img{animation:sunpop 640ms cubic-bezier(.22,.8,.2,1) 240ms 1 both}
 .is-live .piece.live:hover,.is-live .piece.live.tap{animation-play-state:paused}
 .piece .info{position:absolute;left:0;top:100%;margin-top:8px;z-index:60;
   max-width:220px;white-space:normal;
