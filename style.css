@@ -119,6 +119,14 @@ body.opened{overflow-y:auto}
   transition-delay:var(--sd,0s)}
 .is-open .piece{transform:none;opacity:1}
 .piece.shadow{box-shadow:0 3px 6px rgba(38,30,14,.32),0 11px 20px rgba(38,30,14,.16)}
+/* --- выделенные работы: ореол, паспарту, увеличение --- */
+.piece.mark{box-shadow:0 0 0 1px rgba(247,242,229,.62),
+  0 0 30px 7px rgba(196,58,24,.20),
+  0 12px 26px rgba(38,30,14,.32),0 32px 60px rgba(38,30,14,.20)}
+.piece.mark>img{transform:scale(1.05)}
+.piece.mark:hover{box-shadow:0 0 0 1px rgba(247,242,229,.92),
+  0 0 46px 13px rgba(196,58,24,.30),
+  0 18px 40px rgba(38,30,14,.36),0 46px 88px rgba(38,30,14,.24)}
 .piece.hero{filter:drop-shadow(2px 3px 2px rgba(38,30,14,.42)) drop-shadow(10px 17px 18px rgba(38,30,14,.22))}
 .piece.det{box-shadow:0 3px 6px rgba(38,30,14,.30),0 11px 20px rgba(38,30,14,.15)}
 .piece.strip{opacity:.93}
@@ -185,6 +193,7 @@ body.opened{overflow-y:auto}
   transform-origin:0 0;
   transition:opacity .16s ease-out,transform .16s ease-out;pointer-events:none}
 .piece:hover .info,.piece.tap .info{opacity:1;transform:translateY(0) rotate(calc(var(--rot) * -1))}
+.piece.mark .info{border-left:3px solid #C43A18;padding-left:9px}
 .piece.tap{animation-play-state:paused}
 .ray.thin img{filter:none}
 
