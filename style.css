@@ -43,6 +43,13 @@ body{font-family:'Playfair Display',Georgia,serif;color:var(--ink)}
   background:#FF6A2A;transform:scaleX(0);transform-origin:left;
   transition:transform .35s cubic-bezier(.22,.61,.36,1)}
 .s2type .ig2:hover::after{transform:scaleX(1)}
+.s2frames{position:relative;z-index:3;margin-top:6vh;display:flex;gap:12px;align-items:flex-end}
+.s2frames img{width:min(150px,17vw);box-shadow:0 12px 28px rgba(0,0,0,.5);
+  opacity:0;transform:translateY(18px);
+  animation:framein .8s cubic-bezier(.16,.84,.24,1) var(--fd,0s) forwards}
+@keyframes framein{to{opacity:1;transform:none}}
+.s2cap{font:9px/1 'JetBrains Mono',monospace;letter-spacing:2.6px;
+  color:rgba(239,231,214,.5);margin-left:6px;padding-bottom:8px}
 .s2photos{position:relative;z-index:3;margin-top:9vh;display:flex;gap:24px;flex-wrap:wrap}
 .s2photos img{width:min(200px,23vw);box-shadow:0 14px 34px rgba(0,0,0,.55);
   transform:rotate(var(--rot,0deg))}
@@ -249,6 +256,9 @@ body.opened{overflow-y:auto}
   .s2type{margin:26px 0 0;margin-left:0}
   .s2type h2{font-size:27px}
   .s2type p{font-size:9px;letter-spacing:2px}
+  .s2frames{gap:7px;margin-top:22px;flex-wrap:wrap}
+  .s2frames img{width:21vw}
+  .s2cap{font-size:8px;letter-spacing:2px}
   .s2photos{gap:10px;margin-top:30px}
   .s2photos img{width:42vw}
   .s2obj{filter:drop-shadow(0 10px 24px rgba(0,0,0,.5))}
